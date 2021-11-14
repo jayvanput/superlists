@@ -77,7 +77,6 @@ class NewVisitorTest(LiveServerTestCase):
         inputbox = self.browser.find_element_by_id("id_new_item")
         inputbox.send_keys("Buy milk")
         inputbox.send_keys(Keys.ENTER)
-        self.browser.implicitly_wait(20)
 
         # Bob gets his own unique URL
         bob_list_url = self.browser.current_url
