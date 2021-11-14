@@ -45,7 +45,7 @@ class NewVisitorTest(LiveServerTestCase):
         inputbox.send_keys(Keys.ENTER)
         time.sleep(1)
         alice_list_url = self.browser.current_url
-        self.assertRegex(alice_list_url, "/list/.+")
+        self.assertRegex(alice_list_url, "/lists/.+")
         self.check_for_row_in_list_table("1: Write user story")
 
         # A text box is still on the screen so she can enter another item. She enters "Launch website"
@@ -65,6 +65,7 @@ class NewVisitorTest(LiveServerTestCase):
         self.browser.quit()
         self.browser = webdriver.Firefox(
             executable_path="C:\Program Files\Mozilla Firefox\geckodriver.exe")
+        self.browser.implicitly_wait(3)
 
         # Bob visits the home page. There is no sign of Alice's list.
         self.browser.get(self.live_server_url)
@@ -76,6 +77,7 @@ class NewVisitorTest(LiveServerTestCase):
         inputbox = self.browser.find_element_by_id("id_new_item")
         inputbox.send_keys("Buy milk")
         inputbox.send_keys(Keys.ENTER)
+        self.browser.implicitly_wait(20)
 
         # Bob gets his own unique URL
         bob_list_url = self.browser.current_url
