@@ -79,6 +79,7 @@ class NewVisitorTest(LiveServerTestCase):
         inputbox.send_keys(Keys.ENTER)
 
         # Bob gets his own unique URL
+        time.sleep(1)
         bob_list_url = self.browser.current_url
         self.assertRegex(bob_list_url, "/lists/.+")
         self.assertNotEqual(bob_list_url, alice_list_url)
@@ -89,7 +90,7 @@ class NewVisitorTest(LiveServerTestCase):
         self.assertIn("Buy milk", page_text)
 
         # She wonders if the website will save the list and notices a unique URL for her.
-        self.fail("Finish the test!")
+
         # She visits the URL and her to-do list is still there.
 
         # She closes out the site.
