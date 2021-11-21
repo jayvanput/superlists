@@ -3,11 +3,26 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
 import time
+import sys
 
 
 class NewVisitorTest(StaticLiveServerTestCase):
 
-    def setUp(self) -> None:
+    @classmethod
+    def setUpClass(cls) -> None:
+        for arg in sys.argv:
+            if "liveserver" in arg:
+                cls.server_url = "http://" + arg.split("=")[1]
+                return
+        super().setUpClass()
+        cls.server_url = cls.live_server_url
+
+    @classmethod
+    def tearDownClass(cls):
+        if cls.server_url == cls.live_server_url:
+            super().tearDownClass
+
+    def setUp(self):
         self.browser = webdriver.Firefox(
             executable_path="C:\Program Files\Mozilla Firefox\geckodriver.exe")
         self.browser.implicitly_wait(3)
@@ -24,7 +39,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
     def test_can_start_a_list_and_retrieve_it_later(self):
 
         # Alice has heard of a new app and goes to check it out.
-        self.browser.get(self.live_server_url)
+        self.browser.get(self.server_url)
 
         # She notices the page title and header mention to-do lists
         self.assertIn("To-Do", self.browser.title)
@@ -68,7 +83,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
         self.browser.implicitly_wait(3)
 
         # Bob visits the home page. There is no sign of Alice's list.
-        self.browser.get(self.live_server_url)
+        self.browser.get(self.server_url)
         page_text = self.browser.find_element_by_tag_name('body').text
         self.assertNotIn("Write user story", page_text)
         self.assertNotIn("Launch website", page_text)
@@ -97,7 +112,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
 
     def test_layout_and_styling(self):
         # Alice goes to the home page.
-        self.browser.get(self.live_server_url)
+        self.browser.get(self.server_url)
         self.browser.set_window_size(1024, 768)
 
         # She notices the input box is nicely centered.
