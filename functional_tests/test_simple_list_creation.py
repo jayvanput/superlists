@@ -1,4 +1,4 @@
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from .base import FunctionalTest
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
@@ -6,36 +6,7 @@ import time
 import sys
 
 
-class NewVisitorTest(StaticLiveServerTestCase):
-
-    @classmethod
-    def setUpClass(cls) -> None:
-        for arg in sys.argv:
-            if "liveserver" in arg:
-                cls.server_url = "http://" + arg.split("=")[1]
-                return
-        super().setUpClass()
-        cls.server_url = cls.live_server_url
-
-    @classmethod
-    def tearDownClass(cls):
-        if cls.server_url == cls.live_server_url:
-            super().tearDownClass
-
-    def setUp(self):
-        self.browser = webdriver.Firefox(
-            executable_path="C:\Program Files\Mozilla Firefox\geckodriver.exe")
-        self.browser.implicitly_wait(3)
-
-    def tearDown(self) -> None:
-        self.browser.quit()
-
-    def check_for_row_in_list_table(self, row_text):
-        table = self.browser.find_element_by_id("id_list_table")
-        rows = table.find_elements_by_tag_name("tr")
-
-        self.assertIn(row_text, [row.text for row in rows])
-
+class NewVisitorTest(FunctionalTest):
     def test_can_start_a_list_and_retrieve_it_later(self):
 
         # Alice has heard of a new app and goes to check it out.
@@ -103,29 +74,6 @@ class NewVisitorTest(StaticLiveServerTestCase):
         page_text = self.browser.find_element_by_tag_name("body").text
         self.assertNotIn("Write user story", page_text)
         self.assertIn("Buy milk", page_text)
-
-        # She wonders if the website will save the list and notices a unique URL for her.
-
-        # She visits the URL and her to-do list is still there.
-
+        # She wonders if the website will save the list and notices a unique URL for her. \
+        # She visits the URL and her to-do list is still there. \
         # She closes out the site.
-
-    def test_layout_and_styling(self):
-        # Alice goes to the home page.
-        self.browser.get(self.server_url)
-        self.browser.set_window_size(1024, 768)
-
-        # She notices the input box is nicely centered.
-        inputbox = self.browser.find_element_by_id("id_new_item")
-        self.assertAlmostEqual(
-            inputbox.location["x"] + inputbox.size["width"] / 2, 512,
-            delta=10)
-
-        # She starts a new list and sees the input is nicely centered there too.
-        inputbox.send_keys("testing")
-        inputbox.send_keys(Keys.ENTER)
-        time.sleep(2)
-        inputbox = self.browser.find_element_by_id("id_new_item")
-        self.assertAlmostEqual(
-            inputbox.location["x"] + inputbox.size["width"] / 2, 512,
-            delta=10)
